@@ -1,0 +1,89 @@
+﻿@page "/devices"
+@inject IMediator Mediator
+@inject NavigationManager Nav
+
+@rendermode InteractiveServer
+
+<h3>Dispozitive înregistrate</h3>
+
+<button class="btn btn-success mb-3" @onclick="OpenAddModal">Adaugă dispozitiv</button>
+
+<AddDeviceModal @ref="addDeviceModal" OnDeviceAdded="ReloadDevices" />
+
+@if (devices == null)
+{
+    <p><em>Se încarcă...</em></p>
+}
+else if (devices.Count == 0)
+{
+    <p>Nu există dispozitive înregistrate.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nume</th>
+                <th>Interval Mesaj (min)</th>
+                <th>Acțiuni</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var device in devices)
+            {
+                <tr>
+                    <td>@device.Name</td>
+                    <td>@device.MessageInterval</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary" @onclick="@(() => DownloadConfig(device.Id))">
+                            Descarcă Config
+                        </button>
+                        <button class="btn btn-sm btn-outline-primary" @onclick="@(() => Statistics(device.Id))">
+                            Statistici
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    [Inject]
+    private IJSRuntime JS { get; set; } = default!;
+
+    private List<DeviceModel> devices = new();
+    private AddDeviceModal addDeviceModal = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDevices();
+    }
+
+    private async Task LoadDevices()
+    {
+        devices = await Mediator.Send(new GetDevicesQuery());
+    }
+
+    private async Task ReloadDevices()
+    {
+        await LoadDevices();
+        StateHasChanged();
+    }
+
+    private void OpenAddModal()
+    {
+        addDeviceModal.Open();
+    }
+
+    private void DownloadConfig(Guid id)
+    {
+        var url = Nav.BaseUri + $"api/DeviceData/{id}/download";
+        JS.InvokeVoidAsync("open", url, "_blank");
+    }
+    
+    private void Statistics(Guid id)
+    {
+        Nav.NavigateTo($"/charts/{id}");
+    }
+}

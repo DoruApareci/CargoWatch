@@ -1,0 +1,55 @@
+﻿@inject IMediator Mediator
+@rendermode InteractiveServer
+
+
+@if (isOpen)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Adaugă dispozitiv</h5>
+                    <button type="button" class="btn-close" @onclick="Cancel"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Nume</label>
+                        <input class="form-control" @bind="newDevice.Name" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Interval Mesaj (min)</label>
+                        <input class="form-control" type="number" @bind="newDevice.MessageInterval" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" @onclick="Cancel">Anulează</button>
+                    <button class="btn btn-primary" @onclick="SaveAsync">Salvează</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public EventCallback OnDeviceAdded { get; set; }
+    private DeviceModel newDevice = new();
+    private bool isOpen = false;
+
+    public void Open()
+    {
+        newDevice = new();
+        isOpen = true;
+    }
+
+    private async Task SaveAsync()
+    {
+        await Mediator.Send(new AddOrEditDeviceCommand(newDevice));
+        isOpen = false;
+        await OnDeviceAdded.InvokeAsync();
+    }
+
+    private void Cancel()
+    {
+        isOpen = false;
+    }
+}

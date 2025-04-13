@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35931.197
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CargoWatch.Infrastructure", "CargoWatch.Data\CargoWatch.Infrastructure.csproj", "{3BE377B3-3CFC-4B64-8702-AC97AA4E1877}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CargoWatch.Domain", "CargoWatch.Domain\CargoWatch.Domain.csproj", "{DFB4C475-FC5E-4B35-A1AA-0E07B5FA2D05}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CargoWatch.Application", "CargoWatch.Application\CargoWatch.Application.csproj", "{4639EFBC-8CFF-413C-ADD7-CCD62A4203B7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CargoWatch.Presentation", "CargoWatch.Presentation\CargoWatch.Presentation.csproj", "{CC0ECA1D-3C92-42FC-8509-A1A8325AE817}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3BE377B3-3CFC-4B64-8702-AC97AA4E1877}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3BE377B3-3CFC-4B64-8702-AC97AA4E1877}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3BE377B3-3CFC-4B64-8702-AC97AA4E1877}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3BE377B3-3CFC-4B64-8702-AC97AA4E1877}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DFB4C475-FC5E-4B35-A1AA-0E07B5FA2D05}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DFB4C475-FC5E-4B35-A1AA-0E07B5FA2D05}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DFB4C475-FC5E-4B35-A1AA-0E07B5FA2D05}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DFB4C475-FC5E-4B35-A1AA-0E07B5FA2D05}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4639EFBC-8CFF-413C-ADD7-CCD62A4203B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4639EFBC-8CFF-413C-ADD7-CCD62A4203B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4639EFBC-8CFF-413C-ADD7-CCD62A4203B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4639EFBC-8CFF-413C-ADD7-CCD62A4203B7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CC0ECA1D-3C92-42FC-8509-A1A8325AE817}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CC0ECA1D-3C92-42FC-8509-A1A8325AE817}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CC0ECA1D-3C92-42FC-8509-A1A8325AE817}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CC0ECA1D-3C92-42FC-8509-A1A8325AE817}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {63FEB462-FEA5-412A-B003-141EEA0DB2F7}
+	EndGlobalSection
+EndGlobal

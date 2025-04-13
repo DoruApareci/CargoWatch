@@ -1,0 +1,93 @@
+﻿@page "/charts/{DeviceId:guid}"
+@inject IMediator Mediator
+
+@rendermode InteractiveServer
+
+@using CargoWatch.Application.Models
+@using CargoWatch.Application.CQRS.GetStatisticsData
+
+<h3>Grafic temperatură</h3>
+
+@if (_lineConfig != null)
+{
+    <Chart Config="_lineConfig" />
+}
+else
+{
+    <p><em>Nu există date pentru a genera graficul.</em></p>
+}
+
+@code {
+    [Parameter]
+    public Guid DeviceId { get; set; }
+
+    private LineConfig _lineConfig;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (DeviceId != Guid.Empty)
+        {
+            var data = await Mediator.Send(new GetStatisticsDataQuery(DeviceId));
+
+            if (data != null && data.Any())
+                GenerateChart(data);
+        }
+    }
+
+    private void GenerateChart(List<StatisticsData> data)
+    {
+        _lineConfig = new LineConfig
+        {
+            Options = new LineOptions
+            {
+                Responsive = true,
+                Title = new OptionsTitle
+                {
+                    Display = true,
+                    Text = "Temperatura în timp"
+                },
+                Scales = new Scales
+                {
+                    XAxes = new List<CartesianAxis>
+                    {
+                        new CategoryAxis
+                        {
+                            Ticks = new CategoryTicks
+                            {
+                                AutoSkip = true
+                            }
+                        }
+                    },
+                    YAxes = new List<CartesianAxis>
+                    {
+                        new LinearCartesianAxis
+                        {
+                            Ticks = new LinearCartesianTicks
+                            {
+                                BeginAtZero = true
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        var dataset = new LineDataset<sbyte>
+        {
+            Label = "Temperatură (°C)",
+            BackgroundColor = ColorUtil.FromDrawingColor(System.Drawing.Color.CornflowerBlue),
+            BorderColor = ColorUtil.FromDrawingColor(System.Drawing.Color.CornflowerBlue),
+            Fill = false,
+            BorderWidth = 2,
+            PointRadius = 3
+        };
+
+        foreach (var point in data.OrderBy(d => d.TimeStamp))
+        {
+            dataset.Add(point.Temp);
+            _lineConfig.Data.Labels.Add(point.TimeStamp.ToString("dd.MM HH:mm"));
+        }
+
+        _lineConfig.Data.Datasets.Add(dataset);
+    }
+}

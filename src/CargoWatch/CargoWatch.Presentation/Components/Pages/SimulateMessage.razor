@@ -1,0 +1,67 @@
+﻿@page "/simulate-message"
+@inject HttpClient Http
+@inject IMediator _mediator
+
+@rendermode InteractiveServer
+
+<h3>Simulează Trimitere Mesaj IoT</h3>
+
+<div class="mb-3">
+    <label class="form-label">Selectează dispozitiv</label>
+    <select class="form-select" @bind="selectedDeviceId">
+        <option disabled selected value="">-- Selectează --</option>
+        @foreach (var device in devices)
+        {
+            <option value="@device.Id">@device.Name</option>
+        }
+    </select>
+</div>
+
+<div class="mb-3">
+    <label class="form-label">Temperatură (°C)</label>
+    <input class="form-control" type="number" @bind="temperature" />
+</div>
+
+<button class="btn btn-primary" @onclick="SendMessage" disabled="@(!CanSend)">
+    Trimite Mesaj
+</button>
+
+@if (!string.IsNullOrEmpty(statusMessage))
+{
+    <div class="mt-3 alert alert-info">@statusMessage</div>
+}
+
+@code {
+    private List<DeviceModel> devices = new();
+    private Guid selectedDeviceId;
+    private sbyte temperature = 0;
+    private string? statusMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        devices = await _mediator.Send(new GetDevicesQuery());
+        Http.BaseAddress = new Uri("https://localhost:7177/");
+    }
+
+    private async Task SendMessage()
+    {
+        var payload = new
+        {
+            senderId = selectedDeviceId,
+            temp = temperature
+        };
+
+        var response = await Http.PostAsJsonAsync("api/DeviceData", payload);
+
+        if (response.IsSuccessStatusCode)
+        {
+            statusMessage = $"✅ Mesaj trimis cu succes. ID = {(await response.Content.ReadFromJsonAsync<Dictionary<string, string>>())?["id"]}";
+        }
+        else
+        {
+            statusMessage = $"❌ Eroare la trimitere: {response.StatusCode}";
+        }
+    }
+
+    private bool CanSend => selectedDeviceId != Guid.Empty;
+}
