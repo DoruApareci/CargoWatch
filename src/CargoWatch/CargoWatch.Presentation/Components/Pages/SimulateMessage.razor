@@ -40,7 +40,7 @@
     protected override async Task OnInitializedAsync()
     {
         devices = await _mediator.Send(new GetDevicesQuery());
-        Http.BaseAddress = new Uri("https://localhost:7177/");
+        Http.BaseAddress = new Uri("http://cargowatch.runasp.net/");
     }
 
     private async Task SendMessage()

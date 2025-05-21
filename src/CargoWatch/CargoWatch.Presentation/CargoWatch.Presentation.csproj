@@ -20,4 +20,10 @@
     <ProjectReference Include="..\CargoWatch.Data\CargoWatch.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="cargowatch.db">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
