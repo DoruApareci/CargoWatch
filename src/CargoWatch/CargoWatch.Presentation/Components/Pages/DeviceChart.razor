@@ -6,7 +6,7 @@
 @using CargoWatch.Application.Models
 @using CargoWatch.Application.CQRS.GetStatisticsData
 
-<h3>Grafic temperatură</h3>
+<h3>Grafic temperatură - @selectedDevice.Name</h3>
 
 @if (_lineConfig != null)
 {
@@ -20,6 +20,7 @@ else
 @code {
     [Parameter]
     public Guid DeviceId { get; set; }
+    private DeviceModel selectedDevice;
 
     private LineConfig _lineConfig;
 
@@ -27,6 +28,8 @@ else
     {
         if (DeviceId != Guid.Empty)
         {
+            var devices = await Mediator.Send(new GetDevicesQuery());
+            selectedDevice = devices.First(x => x.Id == DeviceId); 
             var data = await Mediator.Send(new GetStatisticsDataQuery(DeviceId));
 
             if (data != null && data.Any())

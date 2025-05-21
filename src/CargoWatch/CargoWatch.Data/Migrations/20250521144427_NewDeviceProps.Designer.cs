@@ -3,6 +3,7 @@ using System;
 using CargoWatch.Infrastructure.DbContexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CargoWatch.Infrastructure.Migrations
 {
     [DbContext(typeof(CargoWatchDbContext))]
-    partial class CargoWatchDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250521144427_NewDeviceProps")]
+    partial class NewDeviceProps
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.15");
@@ -271,17 +274,6 @@ namespace CargoWatch.Infrastructure.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("NeededTemperature")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("SSID")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("SSID_Password")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.ToTable("Devices", (string)null);

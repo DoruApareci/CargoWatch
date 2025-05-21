@@ -1,9 +1,7 @@
 ﻿using CargoWatch.Application.CQRS.AddDataSet;
 using CargoWatch.Application.CQRS.DownloadDeviceConfiguration;
-using CargoWatch.Application.CQRS.GetDevices;
 using CargoWatch.Application.Models;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CargoWatch.Presentation.Controllers

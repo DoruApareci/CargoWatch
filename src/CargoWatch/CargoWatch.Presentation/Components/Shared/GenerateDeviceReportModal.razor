@@ -1,0 +1,103 @@
+﻿@using CargoWatch.Application.CQRS.DownloadDeviceReport
+@inject IMediator Mediator
+@rendermode InteractiveServer
+
+@if (isOpen)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Generează raport pentru dispozitiv</h5>
+                    <button type="button" class="btn-close" @onclick="Cancel"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Data de început</label>
+                        <input class="form-control" type="date" @bind="startDateString" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Data de sfârșit</label>
+                        <input class="form-control" type="date" @bind="endDateString" />
+                    </div>
+                    @if (!string.IsNullOrEmpty(errorMessage))
+                    {
+                        <div class="alert alert-danger">@errorMessage</div>
+                    }
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" @onclick="Cancel">Anulează</button>
+                    <button class="btn btn-primary" @onclick="GenerateReportAsync">Generează raport</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public EventCallback OnReportGenerated { get; set; }
+
+    private bool isOpen = false;
+    private Guid deviceId;
+    private string? reportText;
+    private string errorMessage = string.Empty;
+
+    private DateTime startDateString = DateTime.Today.AddDays(-7).Date;
+    private DateTime endDateString = DateTime.Today.Date;
+
+    public void Open(Guid id)
+    {
+        deviceId = id;
+        reportText = null;
+        errorMessage = string.Empty;
+
+        startDateString = DateTime.Today.AddDays(-7).Date;
+        endDateString = DateTime.Today.Date;
+
+        isOpen = true;
+        StateHasChanged();
+    }
+
+    private async Task GenerateReportAsync()
+    {
+        errorMessage = string.Empty;
+
+        if (endDateString < startDateString)
+        {
+            errorMessage = "Data de sfârșit trebuie să fie după data de început.";
+            return;
+        }
+
+        try
+        {
+            var query = new DownloadDeviceReportQuery(deviceId, startDateString, endDateString);
+            reportText = await Mediator.Send(query);
+            await OnReportGenerated.InvokeAsync();
+
+            await DownloadReport();
+            Cancel();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Eroare la generarea raportului: {ex.Message}";
+        }
+    }
+
+    private async Task DownloadReport()
+    {
+        if (string.IsNullOrEmpty(reportText))
+            return;
+
+        var fileName = $"RaportDispozitiv_{deviceId}_{DateTime.Now:yyyyMMddHHmmss}.txt";
+        await JS.InvokeVoidAsync("downloadFileFromText", fileName, reportText);
+    }
+
+    private void Cancel()
+    {
+        isOpen = false;
+        reportText = null;
+        errorMessage = string.Empty;
+    }
+
+    [Inject] private IJSRuntime JS { get; set; } = default!;
+}

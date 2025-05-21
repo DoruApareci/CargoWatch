@@ -1,14 +1,18 @@
 ﻿@page "/devices"
 @inject IMediator Mediator
 @inject NavigationManager Nav
+@inject IJSRuntime JS
 
 @rendermode InteractiveServer
 
-<h3>Dispozitive înregistrate</h3>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="m-0">Dispozitive înregistrate</h3>
+    <button class="btn btn-success" @onclick="OpenAddModal">Adaugă dispozitiv</button>
+</div>
 
-<button class="btn btn-success mb-3" @onclick="OpenAddModal">Adaugă dispozitiv</button>
 
-<AddDeviceModal @ref="addDeviceModal" OnDeviceAdded="ReloadDevices" />
+<AddDeviceModal @ref="deviceModal" OnDeviceSaved="ReloadDevices" />
+<GenerateDeviceReportModal @ref="reportModal" OnReportGenerated="OnReportGeneratedHandler" />
 
 @if (devices == null)
 {
@@ -41,6 +45,12 @@ else
                         <button class="btn btn-sm btn-outline-primary" @onclick="@(() => Statistics(device.Id))">
                             Statistici
                         </button>
+                        <button class="btn btn-sm btn-outline-secondary" @onclick="@(() => OpenEditModal(device))">
+                            Editează
+                        </button>
+                        <button class="btn btn-sm btn-outline-secondary" @onclick="@(() => OpenReportModal(device.Id))">
+                            Generează raport
+                        </button>
                     </td>
                 </tr>
             }
@@ -49,15 +59,23 @@ else
 }
 
 @code {
-    [Inject]
-    private IJSRuntime JS { get; set; } = default!;
-
     private List<DeviceModel> devices = new();
-    private AddDeviceModal addDeviceModal = new();
+    private AddDeviceModal deviceModal = new();
+    private GenerateDeviceReportModal reportModal = new();
+
 
     protected override async Task OnInitializedAsync()
     {
         await LoadDevices();
+    }
+
+    private async Task OnReportGeneratedHandler()
+    {
+
+    }
+    private void OpenReportModal(Guid deviceId)
+    {
+        reportModal.Open(deviceId);
     }
 
     private async Task LoadDevices()
@@ -73,7 +91,12 @@ else
 
     private void OpenAddModal()
     {
-        addDeviceModal.Open();
+        deviceModal.Open(null);
+    }
+
+    private void OpenEditModal(DeviceModel device)
+    {
+        deviceModal.Open(device);
     }
 
     private void DownloadConfig(Guid id)
@@ -81,7 +104,7 @@ else
         var url = Nav.BaseUri + $"api/DeviceData/{id}/download";
         JS.InvokeVoidAsync("open", url, "_blank");
     }
-    
+
     private void Statistics(Guid id)
     {
         Nav.NavigateTo($"/charts/{id}");

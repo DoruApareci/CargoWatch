@@ -3,6 +3,7 @@ using System;
 using CargoWatch.Infrastructure.DbContexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CargoWatch.Infrastructure.Migrations
 {
     [DbContext(typeof(CargoWatchDbContext))]
-    partial class CargoWatchDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250521203759_NewProps")]
+    partial class NewProps
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.15");
