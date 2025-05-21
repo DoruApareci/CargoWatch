@@ -1,0 +1,80 @@
+﻿@using CargoWatch.Application.CQRS.DeleteDevice
+@inject IMediator Mediator
+@inject IJSRuntime JS
+
+@if (IsOpen)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirmare ștergere</h5>
+                    <button type="button" class="btn-close" @onclick="Cancel"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Sigur doriți să ștergeți dispozitivul <strong>@DeviceName</strong>?</p>
+                    <p>Toate mesajele asociate vor fi șterse definitiv.</p>
+                    @if (!string.IsNullOrEmpty(ErrorMessage))
+                    {
+                        <div class="alert alert-danger">@ErrorMessage</div>
+                    }
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" @onclick="Cancel">Anulează</button>
+                    <button class="btn btn-danger" @onclick="ConfirmDeleteAsync" disabled="@IsDeleting">
+                        @(IsDeleting ? "Se șterge..." : "Șterge")
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public EventCallback OnDeleted { get; set; }
+
+    private bool IsOpen { get; set; } = false;
+    private bool IsDeleting { get; set; } = false;
+    private string ErrorMessage { get; set; } = string.Empty;
+
+    private Guid DeviceId { get; set; }
+    private string DeviceName { get; set; } = string.Empty;
+
+    public void Open(Guid deviceId, string deviceName)
+    {
+        DeviceId = deviceId;
+        DeviceName = deviceName;
+        ErrorMessage = string.Empty;
+        IsDeleting = false;
+        IsOpen = true;
+        StateHasChanged();
+    }
+
+    private void Cancel()
+    {
+        IsOpen = false;
+        ErrorMessage = string.Empty;
+    }
+
+    private async Task ConfirmDeleteAsync()
+    {
+        IsDeleting = true;
+        ErrorMessage = string.Empty;
+
+        try
+        {
+            await Mediator.Send(new DeleteDeviceCommand(DeviceId));
+            IsOpen = false;
+            await OnDeleted.InvokeAsync();
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Eroare la ștergere: {ex.Message}";
+        }
+        finally
+        {
+            IsDeleting = false;
+            StateHasChanged();
+        }
+    }
+}

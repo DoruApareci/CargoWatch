@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CargoWatch.Application.Interfaces;
 
+//DbContext wrapper for refference
 public interface IAppDbContext
 {
     public DbSet<DeviceEntity> Devices { get; }

@@ -15,9 +15,10 @@ public class EmailService : IEmailService
     public EmailService(IOptions<SendGridSettings> options)
     {
         _config = options.Value;
-        _client = new SendGridClient(_config.ApiKey);
+        _client = new SendGridClient(_config.ApiKey);//get the api key from config
     }
 
+    //forms data to EmailRequest structure
     public EmailRequest FormEmailRequest(string? emailFrom, string emailTo, string subject, string body)
     {
         return new EmailRequest
@@ -28,7 +29,7 @@ public class EmailService : IEmailService
             Body = body
         };
     }
-
+    //sends email using send grid
     public async Task SendEmail(EmailRequest emailRequest)
     {
         var emailFromAddress = new EmailAddress(emailRequest.EmailFrom ?? _config.DefaultEmail, _config.FromName);

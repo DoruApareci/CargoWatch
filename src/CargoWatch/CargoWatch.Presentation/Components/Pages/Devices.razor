@@ -1,4 +1,5 @@
 ﻿@page "/devices"
+@using CargoWatch.Application.CQRS.DeleteDevice
 @inject IMediator Mediator
 @inject NavigationManager Nav
 @inject IJSRuntime JS
@@ -13,6 +14,7 @@
 
 <AddDeviceModal @ref="deviceModal" OnDeviceSaved="ReloadDevices" />
 <GenerateDeviceReportModal @ref="reportModal" OnReportGenerated="OnReportGeneratedHandler" />
+<DeleteDeviceModal @ref="deleteDeviceModal" OnDeleted="ReloadDevices" />
 
 @if (devices == null)
 {
@@ -51,6 +53,9 @@ else
                         <button class="btn btn-sm btn-outline-secondary" @onclick="@(() => OpenReportModal(device.Id))">
                             Generează raport
                         </button>
+                        <button class="btn btn-sm btn-outline-danger" @onclick="@(() => deleteDeviceModal.Open(device.Id, device.Name))">
+                            Șterge
+                        </button>
                     </td>
                 </tr>
             }
@@ -62,6 +67,7 @@ else
     private List<DeviceModel> devices = new();
     private AddDeviceModal deviceModal = new();
     private GenerateDeviceReportModal reportModal = new();
+    private DeleteDeviceModal deleteDeviceModal = new();
 
 
     protected override async Task OnInitializedAsync()
